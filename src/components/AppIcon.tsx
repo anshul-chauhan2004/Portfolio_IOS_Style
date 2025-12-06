@@ -1,11 +1,13 @@
 import { LucideIcon } from 'lucide-react';
 
 interface AppIconProps {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  image?: string;
   label: string;
-  color: 'peach' | 'coral' | 'yellow' | 'blue' | 'lavender' | 'beige';
+  color?: 'peach' | 'coral' | 'yellow' | 'blue' | 'lavender' | 'beige';
   onClick?: () => void;
   delay?: number;
+  size?: number; // Size in pixels, defaults to 62
 }
 
 const colorStyles = {
@@ -29,33 +31,73 @@ const colorStyles = {
   },
 };
 
-export function AppIcon({ icon: Icon, label, color, onClick, delay = 0 }: AppIconProps) {
-  const styles = colorStyles[color];
+export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, size = 62 }: AppIconProps) {
+  // If image is provided, use image-based icon
+  if (image) {
+    return (
+      <div
+        className="flex flex-col items-center gap-2 opacity-0 animate-fade-in"
+        style={{
+          animationDelay: `${delay}ms`,
+          animationFillMode: 'forwards',
+        }}
+      >
+        <button
+          onClick={onClick}
+          className="transition-all duration-200 active:scale-90 hover:scale-105"
+        >
+          <img
+            src={image}
+            alt={label}
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              borderRadius: '22%',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
+            }}
+          />
+        </button>
+        <span
+          className="text-[11px] max-w-[70px] text-center truncate font-medium"
+          style={{
+            color: 'white',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          {label}
+        </span>
+      </div>
+    );
+  }
+
+  // Otherwise use Lucide icon with gradient background
+  const styles = colorStyles[color || 'blue'];
 
   return (
     <div
-      className="flex flex-col items-center gap-2 animate-fade-in"
+      className="flex flex-col items-center gap-2 opacity-0 animate-fade-in"
       style={{
         animationDelay: `${delay}ms`,
-        opacity: 0,
         animationFillMode: 'forwards',
       }}
     >
       <button
         onClick={onClick}
-        className={`w-[62px] h-[62px] ${styles.gradient} flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-105`}
+        className={`${styles.gradient} flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-105 border border-white/10`}
         style={{
+          width: `${size}px`,
+          height: `${size}px`,
           borderRadius: '22%',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Icon className="w-7 h-7 text-white" strokeWidth={2} />
+        {Icon && <Icon className="w-7 h-7 text-white stroke-[2.5]" />}
       </button>
       <span
         className="text-[11px] max-w-[70px] text-center truncate font-medium"
         style={{
           color: 'white',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
         }}
       >
         {label}

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { AppIcon } from './components/AppIcon';
 import { DockIcon } from './components/DockIcon';
-import { AppModal } from './components/AppModal';
-import { BootScreen } from './components/BootScreen';
+import { CalendarIcon } from './components/CalendarIcon';
+import { SearchBar } from './components/SearchBar';
 import { LockScreen } from './components/LockScreen';
-import { DynamicIsland } from './components/DynamicIsland';
+import { BootScreen } from './components/BootScreen';
 import { Github, Linkedin, FolderOpen, Award, Mail, FileText, Code2, Briefcase, Terminal, Rocket, Globe, User } from 'lucide-react';
 
 type AppData = {
@@ -23,7 +23,7 @@ export default function App() {
   const [phoneState, setPhoneState] = useState<PhoneState>('BOOTING');
   const [currentPage, setCurrentPage] = useState(0);
   const [currentTime, setCurrentTime] = useState('');
-  const [openApp, setOpenApp] = useState<AppData | null>(null);
+
 
   // Update time every minute
   useEffect(() => {
@@ -42,15 +42,27 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const pages = [
-    [],
+  type PageItem =
+    | { type: 'calendar' }
+    | { type: 'search' }
+    | { image: string; label: string };
+
+  const pages: PageItem[][] = [
+    [
+      { type: 'search' },
+      { type: 'calendar' },
+      { image: '/src/assets/app-icons/files.png', label: 'Files' },
+      { image: '/src/assets/app-icons/photos.png', label: 'Photos' },
+      { image: '/src/assets/app-icons/music.png', label: 'Music' },
+      { image: '/src/assets/app-icons/settings.png', label: 'Settings' },
+    ],
   ];
 
   const dockIcons = [
     { image: '/src/assets/app-icons/phone.png', label: 'Phone' },
     { image: '/src/assets/app-icons/safari.png', label: 'Safari' },
     { image: '/src/assets/app-icons/messages.png', label: 'Messages' },
-    { image: '/src/assets/app-icons/music.png', label: 'Music' },
+    { image: '/src/assets/app-icons/notes.png', label: 'Notes' },
   ];
 
   const handlePageSwitch = (direction: 'left' | 'right') => {
@@ -60,15 +72,6 @@ export default function App() {
       setCurrentPage(currentPage - 1);
     }
   };
-
-  const handleAppOpen = (app: AppData) => {
-    setOpenApp(app);
-  };
-
-  const handleAppClose = () => {
-    setOpenApp(null);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-black p-8 font-sans">
       {/* Ambient light effects */}
@@ -158,20 +161,41 @@ export default function App() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex flex-col h-full px-4 pt-24 pb-4 justify-between">
+            <div className="flex flex-col h-full px-4 pt-40 pb-4 justify-between">
               {/* App Grid with swipe animation */}
               <div
-                className="grid grid-cols-4 gap-x-5 gap-y-10 flex-1 content-start transition-all duration-500 ease-out"
+                className="grid grid-cols-4 gap-x-2 gap-y-10 flex-1 content-start transition-all duration-500 ease-out"
                 style={{
                   transform: `translateX(${-currentPage * 100}%)`,
+                  marginTop: '60px',
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
                 }}
               >
-                {/* Empty - no apps on home screen */}
+                {pages[0].map((app, index) => {
+                  if ('type' in app && app.type === 'search') {
+                    return <SearchBar key={index} />;
+                  }
+                  if ('type' in app && app.type === 'calendar') {
+                    return <CalendarIcon key={index} delay={index * 50} />;
+                  }
+                  // TypeScript now knows app has image and label
+                  const appLabel = 'label' in app ? app.label : '';
+                  return (
+                    <AppIcon
+                      key={index}
+                      image={'image' in app ? app.image : ''}
+                      label={appLabel}
+                      delay={index * 50}
+                      size={appLabel === 'Settings' ? 72 : 62}
+                    />
+                  );
+                })}
               </div>
 
               {/* Swipe hint text (only on first page) */}
               {currentPage === 0 && (
-                <div className="text-center mb-4 opacity-40 text-xs animate-pulse font-medium">
+                <div className="text-center mb-4 opacity-40 text-xs animate-pulse font-medium text-white">
                   Swipe to see more →
                 </div>
               )}
@@ -232,8 +256,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* App Modal */}
-      {openApp && <AppModal app={openApp} onClose={handleAppClose} />}
+
     </div>
   );
 }
