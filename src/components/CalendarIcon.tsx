@@ -1,9 +1,10 @@
 interface CalendarIconProps {
     onClick?: () => void;
     delay?: number;
+    isOpen?: boolean;
 }
 
-export function CalendarIcon({ onClick, delay = 0 }: CalendarIconProps) {
+export function CalendarIcon({ onClick, delay = 0, isOpen = false }: CalendarIconProps) {
     // Get current date
     const now = new Date();
     const month = now.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -11,21 +12,16 @@ export function CalendarIcon({ onClick, delay = 0 }: CalendarIconProps) {
 
     return (
         <div
-            className="flex flex-col items-center gap-2 opacity-0 animate-fade-in"
-            style={{
-                animationDelay: `${delay}ms`,
-                animationFillMode: 'forwards',
-            }}
+            className="flex flex-col items-center gap-2"
         >
             <button
                 onClick={onClick}
                 className="transition-all duration-200 active:scale-90 hover:scale-105"
             >
                 <div
-                    className="w-[62px] h-[62px] flex flex-col overflow-hidden"
+                    className="w-[62px] h-[62px] flex flex-col overflow-hidden bg-white shadow-sm"
                     style={{
                         borderRadius: '22%',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
                     }}
                 >
                     {/* Red header with month */}

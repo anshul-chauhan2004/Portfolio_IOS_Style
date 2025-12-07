@@ -5,6 +5,7 @@ import { CalendarIcon } from './components/CalendarIcon';
 import { SearchBar } from './components/SearchBar';
 import { LockScreen } from './components/LockScreen';
 import { BootScreen } from './components/BootScreen';
+import { CalendarApp } from './components/CalendarApp';
 import { Github, Linkedin, FolderOpen, Award, Mail, FileText, Code2, Briefcase, Terminal, Rocket, Globe, User } from 'lucide-react';
 
 type AppData = {
@@ -23,6 +24,13 @@ export default function App() {
   const [phoneState, setPhoneState] = useState<PhoneState>('BOOTING');
   const [currentPage, setCurrentPage] = useState(0);
   const [currentTime, setCurrentTime] = useState('');
+  const [activeApp, setActiveApp] = useState<string | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleOpenApp = (app: string) => {
+    setIsClosing(false);
+    setActiveApp(app);
+  };
 
 
   // Update time every minute
@@ -38,7 +46,7 @@ export default function App() {
     };
 
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -105,8 +113,9 @@ export default function App() {
                   left: '50px',
                   fontSize: '19px',
                   fontWeight: '600',
-                  color: 'white',
-                  zIndex: 101
+                  color: activeApp && !isClosing ? 'black' : 'white', // adaptive color (white if closing)
+                  zIndex: 301,
+                  transition: activeApp && !isClosing ? 'color 0.2s ease' : 'none' // Instant when closing
                 }}
               >
                 {currentTime || '9:41'}
@@ -123,7 +132,7 @@ export default function App() {
                   height: '35px',
                   backgroundColor: 'black',
                   borderRadius: '20px',
-                  zIndex: 100
+                  zIndex: 300 // Higher than CalendarApp (200)
                 }}
               />
 
@@ -137,25 +146,27 @@ export default function App() {
                   alignItems: 'center',
                   gap: '5px',
                   fontSize: '14px',
-                  zIndex: 101
+                  zIndex: 301,
+                  color: activeApp && !isClosing ? 'black' : 'white', // adaptive color (white if closing)
+                  transition: activeApp && !isClosing ? 'color 0.2s ease' : 'none' // Instant when closing
                 }}
               >
                 {/* Signal Bars */}
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2.5px', height: '16px' }}>
-                  <div style={{ width: '4px', height: '6px', backgroundColor: 'white', borderRadius: '1px' }} />
-                  <div style={{ width: '4px', height: '9px', backgroundColor: 'white', borderRadius: '1px' }} />
-                  <div style={{ width: '4px', height: '12px', backgroundColor: 'white', borderRadius: '1px' }} />
-                  <div style={{ width: '4px', height: '15px', backgroundColor: 'white', borderRadius: '1px' }} />
+                  <div style={{ width: '4px', height: '6px', backgroundColor: activeApp && !isClosing ? 'black' : 'white', borderRadius: '1px' }} />
+                  <div style={{ width: '4px', height: '9px', backgroundColor: activeApp && !isClosing ? 'black' : 'white', borderRadius: '1px' }} />
+                  <div style={{ width: '4px', height: '12px', backgroundColor: activeApp && !isClosing ? 'black' : 'white', borderRadius: '1px' }} />
+                  <div style={{ width: '4px', height: '15px', backgroundColor: activeApp && !isClosing ? 'black' : 'white', borderRadius: '1px' }} />
                 </div>
 
                 {/* 5G Text */}
-                <span style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '0.3px', color: 'white' }}>5G</span>
+                <span style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '0.3px', color: activeApp && !isClosing ? 'black' : 'white' }}>5G</span>
 
                 {/* Battery Icon */}
                 <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
-                  <rect x="1" y="2" width="26" height="12" rx="3" stroke="white" strokeWidth="1.3" fill="white" fillOpacity="0.3" />
-                  <rect x="3" y="4" width="20" height="8" rx="1.5" fill="white" />
-                  <rect x="28" y="6" width="3" height="4" rx="1.2" fill="white" fillOpacity="0.6" />
+                  <rect x="1" y="2" width="26" height="12" rx="3" stroke={activeApp && !isClosing ? 'black' : 'white'} strokeWidth="1.3" fill={activeApp && !isClosing ? 'black' : 'white'} fillOpacity="0.3" />
+                  <rect x="3" y="4" width="20" height="8" rx="1.5" fill={activeApp && !isClosing ? 'black' : 'white'} />
+                  <rect x="28" y="6" width="3" height="4" rx="1.2" fill={activeApp && !isClosing ? 'black' : 'white'} fillOpacity="0.6" />
                 </svg>
               </div>
             </div>
@@ -177,14 +188,15 @@ export default function App() {
                     return <SearchBar key={index} />;
                   }
                   if ('type' in app && app.type === 'calendar') {
-                    return <CalendarIcon key={index} delay={index * 50} />;
+                    return <CalendarIcon key={index} delay={index * 50} onClick={() => handleOpenApp('calendar')} isOpen={activeApp === 'calendar'} />;
                   }
                   // TypeScript now knows app has image and label
                   const appLabel = 'label' in app ? app.label : '';
+                  const appImage = 'image' in app ? app.image : undefined;
                   return (
                     <AppIcon
                       key={index}
-                      image={'image' in app ? app.image : ''}
+                      image={appImage}
                       label={appLabel}
                       delay={index * 50}
                       size={appLabel === 'Settings' ? 72 : 62}
@@ -252,6 +264,12 @@ export default function App() {
               className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-32 opacity-0 hover:opacity-5 bg-gradient-to-l from-black/20 to-transparent transition-opacity z-10"
               disabled={currentPage === pages.length - 1}
             />
+            {activeApp === 'calendar' && (
+              <CalendarApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
           </div>
         </div>
       </div>
