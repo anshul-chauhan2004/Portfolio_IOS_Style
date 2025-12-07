@@ -127,7 +127,7 @@ export function SearchBar() {
         <>
             {/* Full-Screen Active Search Portal */}
             {isSearching && activeRect && createPortal(
-                <div className="fixed inset-0 z-[9999]" style={{ pointerEvents: 'auto' }}>
+                <div className="absolute inset-0 z-[9999]" style={{ pointerEvents: 'auto' }}>
                     {/* Dark Overlay */}
                     <div
                         className="absolute inset-0"
@@ -143,8 +143,16 @@ export function SearchBar() {
                     <div
                         style={{
                             position: 'absolute',
-                            top: `${activeRect.top}px`,
-                            left: `${activeRect.left}px`,
+                            top: (() => {
+                                const container = document.getElementById('phone-main-interface');
+                                const containerRect = container ? container.getBoundingClientRect() : { top: 0, left: 0 };
+                                return `${activeRect.top - containerRect.top}px`;
+                            })(),
+                            left: (() => {
+                                const container = document.getElementById('phone-main-interface');
+                                const containerRect = container ? container.getBoundingClientRect() : { top: 0, left: 0 };
+                                return `${activeRect.left - containerRect.left}px`;
+                            })(),
                             width: `${activeRect.width}px`,
                             zIndex: 10000,
                         }}
@@ -215,7 +223,7 @@ export function SearchBar() {
                         )}
                     </div>
                 </div>,
-                document.body
+                document.getElementById('phone-main-interface') || document.body
             )}
 
             <div className="flex flex-col items-center gap-2 opacity-0 animate-fade-in col-span-4 relative z-[10000]"

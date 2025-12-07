@@ -102,7 +102,7 @@ export default function App() {
           )}
 
           {/* Main Interface - Completely hidden when not unlocked */}
-          <div className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${phoneState === 'UNLOCKED' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div id="phone-main-interface" className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${phoneState === 'UNLOCKED' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             {/* Status Bar */}
             <div className="w-full relative pt-2">
               {/* Time - top left */}
