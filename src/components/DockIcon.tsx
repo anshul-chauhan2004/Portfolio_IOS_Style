@@ -39,12 +39,13 @@ export function DockIcon({ icon: Icon, image, label, color, onClick }: DockIconP
   // If image is provided, use image-based icon
   if (image) {
     // Make phone icon slightly larger to compensate for internal padding
-    const iconSize = image.includes('phone') ? '68px' : '62px';
+    const iconSize = '62px';
 
     return (
       <button
         onClick={onClick}
         className="transition-all duration-200 active:scale-90 hover:scale-105"
+        style={{ flexShrink: 0 }}
       >
         <img
           src={image}

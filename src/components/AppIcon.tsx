@@ -36,11 +36,7 @@ export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, s
   if (image) {
     return (
       <div
-        className="flex flex-col items-center gap-2 opacity-0 animate-fade-in"
-        style={{
-          animationDelay: `${delay}ms`,
-          animationFillMode: 'forwards',
-        }}
+        className="flex flex-col items-center gap-2 relative z-[20]"
       >
         <button
           onClick={onClick}
@@ -75,11 +71,7 @@ export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, s
 
   return (
     <div
-      className="flex flex-col items-center gap-2 opacity-0 animate-fade-in"
-      style={{
-        animationDelay: `${delay}ms`,
-        animationFillMode: 'forwards',
-      }}
+      className="flex flex-col items-center gap-2 relative z-[20]"
     >
       <button
         onClick={onClick}

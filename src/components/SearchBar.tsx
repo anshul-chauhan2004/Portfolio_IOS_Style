@@ -226,14 +226,14 @@ export function SearchBar() {
                 document.getElementById('phone-main-interface') || document.body
             )}
 
-            <div className="flex flex-col items-center gap-2 opacity-0 animate-fade-in col-span-4 relative z-[10000]"
+            <div className="flex flex-col items-center gap-2 opacity-0 animate-fade-in col-span-4 relative z-0"
                 style={{
                     animationDelay: '0ms',
                     animationFillMode: 'forwards',
                 }}
             >
                 {/* Search Bar Container - Ref used for measurement */}
-                <div className="w-full relative z-[10000]" ref={searchBarRef}>
+                <div className="w-full relative z-0" ref={searchBarRef}>
                     {/* 
                        If searching, we hide this content (opacity 0) so it doesn't duplicate visually, 
                        but keep it in DOM to maintain layout space and ref measurement 

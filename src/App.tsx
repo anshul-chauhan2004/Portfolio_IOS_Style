@@ -2,21 +2,17 @@ import { useState, useEffect } from 'react';
 import { AppIcon } from './components/AppIcon';
 import { DockIcon } from './components/DockIcon';
 import { CalendarIcon } from './components/CalendarIcon';
+import { ClockWidget } from './components/ClockWidget';
 import { SearchBar } from './components/SearchBar';
 import { LockScreen } from './components/LockScreen';
 import { BootScreen } from './components/BootScreen';
 import { CalendarApp } from './components/CalendarApp';
-import { Github, Linkedin, FolderOpen, Award, Mail, FileText, Code2, Briefcase, Terminal, Rocket, Globe, User } from 'lucide-react';
-
-type AppData = {
-  icon: any;
-  label: string;
-  color: 'peach' | 'coral' | 'yellow' | 'blue' | 'lavender' | 'beige';
-  content?: {
-    title: string;
-    description: string;
-  };
-};
+import { SettingsApp } from './components/SettingsApp';
+import { PhoneApp } from './components/PhoneApp';
+import { MusicApp } from './components/MusicApp';
+import { MessagesApp } from './components/MessagesApp';
+import { SafariApp } from './components/SafariApp';
+import { FilesApp } from './components/FilesApp';
 
 type PhoneState = 'BOOTING' | 'LOCKED' | 'UNLOCKED';
 
@@ -39,7 +35,6 @@ export default function App() {
       const now = new Date();
       let hours = now.getHours();
       const minutes = now.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       hours = hours ? hours : 12; // 0 should be 12
       setCurrentTime(`${hours}:${minutes.toString().padStart(2, '0')}`);
@@ -53,21 +48,26 @@ export default function App() {
   type PageItem =
     | { type: 'calendar' }
     | { type: 'search' }
+    | { type: 'clock' }
     | { image: string; label: string };
 
   const pages: PageItem[][] = [
     [
       { type: 'search' },
+      { type: 'clock' },
       { type: 'calendar' },
       { image: '/src/assets/app-icons/files.png', label: 'Files' },
-      { image: '/src/assets/app-icons/photos.png', label: 'Photos' },
-      { image: '/src/assets/app-icons/music.png', label: 'Music' },
       { image: '/src/assets/app-icons/settings.png', label: 'Settings' },
+      { image: '/src/assets/app-icons/music.png', label: 'Music' },
     ],
+    [
+      { image: '/src/assets/app-icons/notes.png', label: 'Notes' },
+      { image: '/src/assets/app-icons/apple-logo.png', label: 'About' },
+    ]
   ];
 
   const dockIcons = [
-    { image: '/src/assets/app-icons/phone.png', label: 'Phone' },
+    { image: '/src/assets/app-icons/phone.png', label: 'Contacts' },
     { image: '/src/assets/app-icons/safari.png', label: 'Safari' },
     { image: '/src/assets/app-icons/messages.png', label: 'Messages' },
     { image: '/src/assets/app-icons/notes.png', label: 'Notes' },
@@ -102,7 +102,54 @@ export default function App() {
           )}
 
           {/* Main Interface - Completely hidden when not unlocked */}
-          <div id="phone-main-interface" className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${phoneState === 'UNLOCKED' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div
+            id="phone-main-interface"
+            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${phoneState === 'UNLOCKED' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            onTouchStart={(e) => {
+              // 3-finger swipe detection logic
+              if (e.touches.length === 3) {
+                const startX = e.touches[0].clientX;
+                e.currentTarget.dataset.threeFingerStartX = startX.toString();
+                return;
+              }
+              const touch = e.targetTouches[0];
+              e.currentTarget.dataset.touchStartX = touch.clientX.toString();
+            }}
+            onTouchEnd={(e) => {
+              // 3-finger check
+              if (e.changedTouches.length === 3 && e.currentTarget.dataset.threeFingerStartX) {
+                const startX = parseFloat(e.currentTarget.dataset.threeFingerStartX);
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                if (Math.abs(diff) > 30) {
+                  if (diff > 0) handlePageSwitch('right');
+                  else handlePageSwitch('left');
+                }
+                delete e.currentTarget.dataset.threeFingerStartX;
+                return;
+              }
+
+              const touchStartX = parseFloat(e.currentTarget.dataset.touchStartX || '0');
+              const touchEndX = e.changedTouches[0].clientX;
+              const diff = touchStartX - touchEndX;
+              if (Math.abs(diff) > 50) { // Threshold
+                if (diff > 0) handlePageSwitch('right');
+                else handlePageSwitch('left');
+              }
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.dataset.mouseStartX = e.clientX.toString();
+            }}
+            onMouseUp={(e) => {
+              const mouseStartX = parseFloat(e.currentTarget.dataset.mouseStartX || '0');
+              const mouseEndX = e.clientX;
+              const diff = mouseStartX - mouseEndX;
+              if (Math.abs(diff) > 50) {
+                if (diff > 0) handlePageSwitch('right');
+                else handlePageSwitch('left');
+              }
+            }}
+          >
             {/* Status Bar */}
             <div className="w-full relative pt-2">
               {/* Time - top left */}
@@ -171,46 +218,63 @@ export default function App() {
               </div>
             </div>
 
+
             {/* Main Content Area */}
-            <div className="flex flex-col h-full px-4 pt-40 pb-4 justify-between">
+            <div
+              className="flex flex-col h-full px-4 pt-40 pb-4 justify-between"
+            >
               {/* App Grid with swipe animation */}
               <div
-                className="grid grid-cols-4 gap-x-2 gap-y-10 flex-1 content-start transition-all duration-500 ease-out"
+                className="flex flex-1"
                 style={{
-                  transform: `translateX(${-currentPage * 100}%)`,
+                  transform: `translateX(-${(currentPage * 100) / pages.length}%)`,
+                  width: `${pages.length * 100}%`,
                   marginTop: '60px',
+                  transition: 'transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1)', // Snappy and smooth
                   paddingLeft: '8px',
-                  paddingRight: '8px',
+                  paddingRight: '24px',
                 }}
               >
-                {pages[0].map((app, index) => {
-                  if ('type' in app && app.type === 'search') {
-                    return <SearchBar key={index} />;
-                  }
-                  if ('type' in app && app.type === 'calendar') {
-                    return <CalendarIcon key={index} delay={index * 50} onClick={() => handleOpenApp('calendar')} isOpen={activeApp === 'calendar'} />;
-                  }
-                  // TypeScript now knows app has image and label
-                  const appLabel = 'label' in app ? app.label : '';
-                  const appImage = 'image' in app ? app.image : undefined;
-                  return (
-                    <AppIcon
-                      key={index}
-                      image={appImage}
-                      label={appLabel}
-                      delay={index * 50}
-                      size={appLabel === 'Settings' ? 72 : 62}
-                    />
-                  );
-                })}
+                {pages.map((pageApps, pageIndex) => (
+                  <div
+                    key={pageIndex}
+                    className="grid grid-cols-4 content-start w-full flex-shrink-0"
+                    style={{ width: `${100 / pages.length}%`, gap: '2px 2px', rowGap: '48px' }} // Each page takes equal slice
+                  >
+                    {pageApps.map((app, index) => {
+                      if ('type' in app && app.type === 'search') {
+                        return <SearchBar key={index} />;
+                      }
+                      if ('type' in app && app.type === 'clock') {
+                        return <ClockWidget key={index} delay={index * 50} />;
+                      }
+                      if ('type' in app && app.type === 'calendar') {
+                        return <CalendarIcon key={index} delay={index * 50} onClick={() => handleOpenApp('calendar')} isOpen={activeApp === 'calendar' && !isClosing} />;
+                      }
+                      // TypeScript now knows app has image and label
+                      const appLabel = 'label' in app ? app.label : '';
+                      const appImage = 'image' in app ? app.image : undefined;
+
+                      const handleClick = appLabel === 'Settings' ? () => handleOpenApp('settings') :
+                        appLabel === 'Music' ? () => handleOpenApp('music') :
+                          appLabel === 'Files' ? () => handleOpenApp('files') : undefined;
+
+                      return (
+                        <AppIcon
+                          key={index}
+                          image={appImage}
+                          label={appLabel}
+                          delay={index * 50}
+                          size={62}
+                          onClick={handleClick}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
 
-              {/* Swipe hint text (only on first page) */}
-              {currentPage === 0 && (
-                <div className="text-center mb-4 opacity-40 text-xs animate-pulse font-medium text-white">
-                  Swipe to see more →
-                </div>
-              )}
+
 
               {/* Pagination Dots */}
               <div className="flex justify-center gap-2 mb-4">
@@ -247,25 +311,56 @@ export default function App() {
                       key={index}
                       image={app.image}
                       label={app.label}
+                      onClick={() =>
+                        app.label === 'Contacts' ? handleOpenApp('phone') :
+                          app.label === 'Messages' ? handleOpenApp('messages') :
+                            app.label === 'Safari' ? handleOpenApp('safari') : undefined
+                      }
                     />
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Navigation Buttons (hidden but functional for click) */}
-            <button
-              onClick={() => handlePageSwitch('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-32 opacity-0 hover:opacity-5 bg-gradient-to-r from-black/20 to-transparent transition-opacity z-10"
-              disabled={currentPage === 0}
-            />
-            <button
-              onClick={() => handlePageSwitch('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-32 opacity-0 hover:opacity-5 bg-gradient-to-l from-black/20 to-transparent transition-opacity z-10"
-              disabled={currentPage === pages.length - 1}
-            />
+
             {activeApp === 'calendar' && (
               <CalendarApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'settings' && (
+              <SettingsApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'phone' && (
+              <PhoneApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'music' && (
+              <MusicApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'messages' && (
+              <MessagesApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'safari' && (
+              <SafariApp
+                onClose={() => setActiveApp(null)}
+                onStartClose={() => setIsClosing(true)}
+              />
+            )}
+            {activeApp === 'files' && (
+              <FilesApp
                 onClose={() => setActiveApp(null)}
                 onStartClose={() => setIsClosing(true)}
               />

@@ -12,48 +12,53 @@ export function CalendarIcon({ onClick, delay = 0, isOpen = false }: CalendarIco
 
     return (
         <div
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2 relative z-[20]"
         >
             <button
                 onClick={onClick}
-                className="transition-all duration-200 active:scale-90 hover:scale-105"
+                className={`
+                  relative bg-white overflow-hidden 
+                  transition-all duration-200 active:scale-90 hover:scale-105
+                  ${isOpen ? 'opacity-0' : 'opacity-100'}
+                  flex flex-col items-center
+                `}
+                style={{
+                    width: '62px',
+                    height: '62px',
+                    borderRadius: '22%',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
+                    padding: 0,
+                }}
             >
+                {/* Red header with month */}
                 <div
-                    className="w-[62px] h-[62px] flex flex-col overflow-hidden bg-white shadow-sm"
+                    className="flex items-center justify-center w-full"
                     style={{
-                        borderRadius: '22%',
+                        background: 'linear-gradient(180deg, #FF6B6B 0%, #EE5A52 100%)',
+                        height: '20px',
+                        fontSize: '10px',
+                        fontWeight: '700',
+                        color: 'white',
+                        letterSpacing: '0.5px',
                     }}
                 >
-                    {/* Red header with month */}
-                    <div
-                        className="flex items-center justify-center"
-                        style={{
-                            background: 'linear-gradient(180deg, #FF6B6B 0%, #EE5A52 100%)',
-                            height: '20px',
-                            fontSize: '10px',
-                            fontWeight: '700',
-                            color: 'white',
-                            letterSpacing: '0.5px',
-                        }}
-                    >
-                        {month}
-                    </div>
-
-                    {/* White body with day number */}
-                    <div
-                        className="flex items-center justify-center flex-1"
-                        style={{
-                            background: 'white',
-                            fontSize: '28px',
-                            fontWeight: '300',
-                            color: '#333',
-                            lineHeight: '1',
-                        }}
-                    >
-                        {day}
-                    </div>
+                    {month}
                 </div>
-            </button>
+
+                {/* White body with day number */}
+                <div
+                    className="flex items-center justify-center flex-1 w-full"
+                    style={{
+                        background: 'white',
+                        fontSize: '28px',
+                        fontWeight: '300',
+                        color: '#333',
+                        lineHeight: '1',
+                    }}
+                >
+                    {day}
+                </div>
+            </button >
             <span
                 className="text-[11px] max-w-[70px] text-center truncate font-medium"
                 style={{
@@ -63,6 +68,6 @@ export function CalendarIcon({ onClick, delay = 0, isOpen = false }: CalendarIco
             >
                 Calendar
             </span>
-        </div>
+        </div >
     );
 }
