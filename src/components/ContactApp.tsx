@@ -1,12 +1,12 @@
 import { ChevronLeft, MessageCircle, Mail, Github, Linkedin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-interface PhoneAppProps {
+interface ContactAppProps {
     onClose: () => void;
     onStartClose?: () => void;
 }
 
-export function PhoneApp({ onClose, onStartClose }: PhoneAppProps) {
+export function ContactApp({ onClose, onStartClose }: ContactAppProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     // Trigger entry animation

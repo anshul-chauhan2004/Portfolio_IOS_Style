@@ -8,6 +8,7 @@ interface AppIconProps {
   onClick?: () => void;
   delay?: number;
   size?: number; // Size in pixels, defaults to 62
+  dataTutorial?: string; // For tutorial spotlight
 }
 
 const colorStyles = {
@@ -31,12 +32,13 @@ const colorStyles = {
   },
 };
 
-export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, size = 62 }: AppIconProps) {
+export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, size = 62, dataTutorial }: AppIconProps) {
   // If image is provided, use image-based icon
   if (image) {
     return (
       <div
         className="flex flex-col items-center gap-2 relative z-[20]"
+        data-tutorial={dataTutorial}
       >
         <button
           onClick={onClick}
@@ -72,6 +74,7 @@ export function AppIcon({ icon: Icon, image, label, color, onClick, delay = 0, s
   return (
     <div
       className="flex flex-col items-center gap-2 relative z-[20]"
+      data-tutorial={dataTutorial}
     >
       <button
         onClick={onClick}

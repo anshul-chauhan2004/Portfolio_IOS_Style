@@ -6,22 +6,29 @@ interface SearchResult {
     title: string;
     description: string;
     category: string;
+    appId?: string; // Optional app ID to open when clicked
 }
 
-export function SearchBar() {
+interface SearchBarProps {
+    onOpenApp?: (appId: string) => void;
+}
+
+export function SearchBar({ onOpenApp }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const searchBarRef = useRef<HTMLDivElement>(null);
     const [activeRect, setActiveRect] = useState<DOMRect | null>(null);
 
-    // Sample portfolio data
+    // Search results mapped to apps with accurate descriptions
     const portfolioData: SearchResult[] = [
-        { title: 'Full Stack Developer', description: 'Experienced in React, Node.js, and TypeScript', category: 'Skills' },
-        { title: 'Web Development', description: 'Building modern web applications with cutting-edge technologies', category: 'Expertise' },
-        { title: 'UI/UX Design', description: 'Creating beautiful and intuitive user interfaces', category: 'Skills' },
-        { title: 'Projects', description: 'View my latest work and case studies', category: 'Portfolio' },
-        { title: 'Contact', description: 'Get in touch for collaborations', category: 'Contact' },
-        { title: 'About Me', description: 'Learn more about my background and journey', category: 'Profile' },
+        { title: 'Calendar', description: 'Work experience timeline and professional journey', category: 'App', appId: 'calendar' },
+        { title: 'Settings', description: 'Personal information and contact details', category: 'App', appId: 'settings' },
+        { title: 'Weather', description: 'Current weather conditions and 7-day forecast', category: 'App', appId: 'weather' },
+        { title: 'Files', description: 'Professional certificates and achievements', category: 'App', appId: 'files' },
+        { title: 'Music', description: 'My tech stack and skills', category: 'App', appId: 'music' },
+        { title: 'Safari', description: 'Web browser with favorite websites and bookmarks', category: 'App', appId: 'safari' },
+        { title: 'Messages', description: 'Contact form and communication', category: 'App', appId: 'messages' },
+        { title: 'Contact', description: 'Contact information and phone details', category: 'App', appId: 'phone' },
     ];
 
     const searchResults = portfolioData.filter(item =>
@@ -40,13 +47,6 @@ export function SearchBar() {
     // Lock body scroll when searching
     useEffect(() => {
         if (isSearching) {
-            // Calculate scrollbar width to prevent layout shift
-            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-
-            document.body.style.overflow = 'hidden';
-            if (scrollbarWidth > 0) {
-                document.body.style.paddingRight = `${scrollbarWidth}px`;
-            }
 
             // Also prevent touchmove to stop overscroll on mobile
             const preventDefault = (e: Event) => e.preventDefault();
@@ -184,7 +184,11 @@ export function SearchBar() {
                                         className="px-4 py-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/10 last:border-b-0"
                                         style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
                                         onClick={() => {
-                                            setSearchQuery(result.title);
+                                            // Open app if appId is provided
+                                            if (result.appId && onOpenApp) {
+                                                onOpenApp(result.appId);
+                                            }
+                                            setSearchQuery(''); // Clear search text
                                             setIsSearching(false);
                                         }}
                                     >
@@ -227,9 +231,11 @@ export function SearchBar() {
             )}
 
             <div className="flex flex-col items-center gap-2 opacity-0 animate-fade-in col-span-4 relative z-0"
+                data-tutorial="search"
                 style={{
                     animationDelay: '0ms',
                     animationFillMode: 'forwards',
+                    height: 'auto',
                 }}
             >
                 {/* Search Bar Container - Ref used for measurement */}

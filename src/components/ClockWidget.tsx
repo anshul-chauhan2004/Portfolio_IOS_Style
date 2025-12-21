@@ -16,34 +16,37 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
         return () => clearInterval(timer);
     }, []);
 
-    const hours = time.getHours() % 12;
+    const hours = time.getHours() % 12 || 12;
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
 
     // Calculate angles for clock hands
-    const secondAngle = (seconds * 6) - 90; // 6 degrees per second
-    const minuteAngle = (minutes * 6 + seconds * 0.1) - 90; // 6 degrees per minute + smooth transition
-    const hourAngle = (hours * 30 + minutes * 0.5) - 90; // 30 degrees per hour + smooth transition
+    const secondAngle = (seconds * 6) + 90; // 6 degrees per second
+    const hourAngle = (hours * 30 + minutes * 0.5) + 90; // Hour hand: 30 degrees per hour + 0.5 per minute
+    const minuteAngle = (minutes * 6 + seconds * 0.1) + 90; // Minute hand: 6 degrees per minute + 0.1 per second
 
     return (
         <div
             className="flex flex-col items-center gap-2 relative z-[20]"
             style={{
                 animationDelay: `${delay}ms`,
+                gridColumn: 'span 2',
+                gridRow: 'span 1',
             }}
         >
             <button
                 onClick={onClick}
-                className="relative transition-all duration-200 active:scale-90 hover:scale-105"
+                className="relative"
                 style={{
-                    width: '62px',
-                    height: '62px',
+                    width: '140px',
+                    height: '140px',
                     borderRadius: '22%',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
                     padding: 0,
                     background: '#1c1c1e',
                     border: 'none',
                     overflow: 'visible',
+                    cursor: 'default'
                 }}
             >
                 {/* Clock Face */}
@@ -53,8 +56,8 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: '52px',
-                        height: '52px',
+                        width: '120px',
+                        height: '120px',
                         borderRadius: '50%',
                         background: 'white',
                         display: 'flex',
@@ -65,7 +68,7 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                     {/* Clock numbers */}
                     {[12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num, index) => {
                         const angle = (index * 30) - 90;
-                        const radius = 18;
+                        const radius = 45;
                         const x = Math.cos((angle * Math.PI) / 180) * radius;
                         const y = Math.sin((angle * Math.PI) / 180) * radius;
 
@@ -77,7 +80,7 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                                     left: `calc(50% + ${x}px)`,
                                     top: `calc(50% + ${y}px)`,
                                     transform: 'translate(-50%, -50%)',
-                                    fontSize: '7px',
+                                    fontSize: '16px',
                                     fontWeight: '400',
                                     color: '#000',
                                 }}
@@ -91,8 +94,8 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                     <div
                         style={{
                             position: 'absolute',
-                            width: '4px',
-                            height: '4px',
+                            width: '8px',
+                            height: '8px',
                             borderRadius: '50%',
                             background: '#000',
                             zIndex: 10,
@@ -103,13 +106,13 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                     <div
                         style={{
                             position: 'absolute',
-                            width: '14px',
-                            height: '2px',
+                            width: '28px',
+                            height: '4px',
                             background: '#000',
                             transformOrigin: 'right center',
                             transform: `rotate(${hourAngle}deg)`,
                             right: '50%',
-                            borderRadius: '1px',
+                            borderRadius: '2px',
                             transition: 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
                         }}
                     />
@@ -118,13 +121,13 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                     <div
                         style={{
                             position: 'absolute',
-                            width: '20px',
-                            height: '2px',
+                            width: '48px',
+                            height: '4px',
                             background: '#000',
                             transformOrigin: 'right center',
                             transform: `rotate(${minuteAngle}deg)`,
                             right: '50%',
-                            borderRadius: '1px',
+                            borderRadius: '2px',
                             transition: 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
                         }}
                     />
@@ -133,8 +136,8 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                     <div
                         style={{
                             position: 'absolute',
-                            width: '22px',
-                            height: '1px',
+                            width: '52px',
+                            height: '2px',
                             background: '#ff3b30',
                             transformOrigin: 'right center',
                             transform: `rotate(${secondAngle}deg)`,
@@ -145,7 +148,7 @@ export function ClockWidget({ onClick, delay = 0 }: ClockWidgetProps) {
                 </div>
             </button>
             <span
-                className="text-[11px] max-w-[70px] text-center truncate font-medium"
+                className="text-[11px] max-w-[140px] text-center truncate font-medium"
                 style={{
                     color: 'white',
                     textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',

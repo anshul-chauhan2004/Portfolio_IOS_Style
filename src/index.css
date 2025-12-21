@@ -1881,3 +1881,16 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Prevent white background when swiping */
+html,
+body {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #000000 100%) !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* Prevent scrollbar to eliminate layout shift */
+html {
+  overflow: hidden;
+  height: 100vh;
+}
