@@ -17,9 +17,9 @@ import { FilesApp } from './components/FilesApp';
 import { AssistiveTouch } from './components/AssistiveTouch';
 
 import { WeatherApp } from './components/WeatherApp';
-import { Tutorial } from './components/Tutorial';
 import { WelcomeLoader } from './components/WelcomeLoader';
 import { PasswordInfo } from './components/PasswordInfo';
+import { ProjectsStack } from './components/ProjectsStack';
 
 type PhoneState = 'BOOTING' | 'LOCKED' | 'UNLOCKED';
 
@@ -73,6 +73,7 @@ export default function App() {
     | { type: 'search' }
     | { type: 'clock' }
     | { type: 'weather' }
+    | { type: 'projects' }
     | { type: 'empty' }
     | { image: string; label: string };
 
@@ -87,8 +88,7 @@ export default function App() {
       { image: '/src/assets/app-icons/files.png', label: 'Files' },
     ],
     [
-      { image: '/src/assets/app-icons/notes.png', label: 'Notes' },
-      { image: '/src/assets/app-icons/apple-logo.png', label: 'About' },
+      { type: 'projects' },
     ]
   ];
 
@@ -314,6 +314,9 @@ export default function App() {
                         }
                         if ('type' in app && app.type === 'weather') {
                           return <WeatherWidget key={index} delay={index * 50} onClick={() => handleOpenApp('weather')} />;
+                        }
+                        if ('type' in app && app.type === 'projects') {
+                          return <ProjectsStack key={index} />;
                         }
 
                         if ('type' in app && app.type === 'empty') {

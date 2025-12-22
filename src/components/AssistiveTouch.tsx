@@ -27,6 +27,7 @@ export function AssistiveTouch({ onLock }: AssistiveTouchProps) {
     // Touch handlers
     const handleTouchStart = (e: React.TouchEvent) => {
         e.stopPropagation();
+        e.preventDefault();
         const touch = e.touches[0];
         const rect = containerRef.current?.parentElement?.getBoundingClientRect();
         if (!rect) return;
@@ -41,6 +42,7 @@ export function AssistiveTouch({ onLock }: AssistiveTouchProps) {
     const handleTouchMove = (e: React.TouchEvent) => {
         if (!isDragging) return;
         e.stopPropagation();
+        e.preventDefault();
 
         const touch = e.touches[0];
         const rect = containerRef.current?.parentElement?.getBoundingClientRect();
