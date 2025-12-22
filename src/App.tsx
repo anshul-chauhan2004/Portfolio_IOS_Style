@@ -20,6 +20,7 @@ import { WeatherApp } from './components/WeatherApp';
 import { WelcomeLoader } from './components/WelcomeLoader';
 import { PasswordInfo } from './components/PasswordInfo';
 import { ProjectsStack } from './components/ProjectsStack';
+import { NotesApp } from './components/NotesApp';
 
 type PhoneState = 'BOOTING' | 'LOCKED' | 'UNLOCKED';
 
@@ -431,7 +432,8 @@ export default function App() {
                         onClick={() =>
                           app.label === 'Contact' ? handleOpenApp('phone') :
                             app.label === 'Messages' ? handleOpenApp('messages') :
-                              app.label === 'Safari' ? handleOpenApp('safari') : undefined
+                              app.label === 'Safari' ? handleOpenApp('safari') :
+                                app.label === 'Notes' ? handleOpenApp('notes') : undefined
                         }
                       />
                     ))}
@@ -486,6 +488,11 @@ export default function App() {
                 <WeatherApp
                   onClose={() => { setIsClosing(true); setTimeout(() => setActiveApp(null), 300); }}
                   onStartClose={() => setIsClosing(true)}
+                />
+              )}
+              {activeApp === 'notes' && (
+                <NotesApp
+                  onClose={() => setActiveApp(null)}
                 />
               )}
 

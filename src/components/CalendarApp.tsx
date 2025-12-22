@@ -8,10 +8,10 @@ interface CalendarAppProps {
 }
 
 const EXPERIENCE_EVENTS = [
-    { id: 101, title: 'Senior Product Designer', company: 'Apple', date: 'Jan 2024 - Present', color: '#000000', logo: '' },
-    { id: 102, title: 'UI/UX Lead', company: 'Airbnb', date: 'Mar 2022 - Dec 2023', color: '#FF5A5F', logo: '🏠' },
-    { id: 103, title: 'Product Designer', company: 'Spotify', date: 'Jun 2020 - Feb 2022', color: '#1DB954', logo: '🎧' },
-    { id: 104, title: 'Junior Designer', company: 'Google', date: 'Aug 2018 - May 2020', color: '#4285F4', logo: 'G' },
+    { id: 104, title: 'Hackathons & Projects', company: 'Devpost · Personal Builds', date: '2025 — Present', color: '#FF3B30', logo: '🛠️' },
+    { id: 103, title: 'DSA & Problem Solving', company: 'LeetCode · Core CS', date: '2024 — Present', color: '#34C759', logo: '🧩' },
+    { id: 102, title: 'Full-Stack Development Focus', company: 'Self-Directed Learning', date: '2024 — Present', color: '#007AFF', logo: '🌐' },
+    { id: 101, title: 'Computer Science Undergraduate', company: 'Chitkara University', date: '2023 — Present', color: '#FF9500', logo: '🎓' },
 ];
 
 const containerVariants: Variants = {
@@ -38,11 +38,12 @@ const itemVariants: Variants = {
 const lineVariants: Variants = {
     hidden: { height: 0, opacity: 0 },
     visible: {
-        height: 'calc(100% - 3.5rem)',
+        height: 'calc(100% - 50px)',
         opacity: 1,
         transition: { duration: 0.8, ease: "easeOut", delay: 0.1 }
     }
 };
+
 
 export function CalendarApp({ onClose, onStartClose }: CalendarAppProps) {
     const [isVisible, setIsVisible] = useState(false);
@@ -84,34 +85,53 @@ export function CalendarApp({ onClose, onStartClose }: CalendarAppProps) {
             {/* Header */}
             <div style={{
                 paddingTop: '3.5rem',
-                paddingBottom: '0.5rem',
+                paddingBottom: '0.8rem',
                 paddingLeft: '1rem',
                 paddingRight: '1rem',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'center',
+                position: 'relative',
                 backgroundColor: '#ffffff',
-                zIndex: 20
+                zIndex: 20,
+                borderBottom: '1px solid rgba(0, 0, 0, 0.05)'
             }}>
                 <button
                     onClick={handleClose}
                     style={{
+                        position: 'absolute',
+                        left: '1rem',
                         display: 'flex',
                         alignItems: 'center',
-                        color: '#ff3b30', // iOS Red
+                        color: '#ff3b30',
                         fontWeight: 400,
                         border: 'none',
                         background: 'none',
                         cursor: 'pointer',
-                        fontSize: '17px'
+                        fontSize: '17px',
+                        padding: 0
                     }}
                 >
                     <ChevronLeft size={24} style={{ marginLeft: '-8px' }} />
                     <span>Back</span>
                 </button>
 
+                <span style={{
+                    fontSize: '17px',
+                    fontWeight: 600,
+                    color: '#000000'
+                }}>
+                    Calendar
+                </span>
+
                 {/* Right Side Icons */}
-                <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                <div style={{
+                    position: 'absolute',
+                    right: '1rem',
+                    display: 'flex',
+                    gap: '24px',
+                    alignItems: 'center'
+                }}>
                     <Search size={22} color="#ff3b30" />
                 </div>
             </div>
@@ -138,12 +158,11 @@ export function CalendarApp({ onClose, onStartClose }: CalendarAppProps) {
                         variants={containerVariants}
                         style={{ position: 'relative', paddingLeft: '0.5rem', paddingTop: '1rem' }}
                     >
-                        {/* Vertical Line */}
                         <motion.div
                             variants={lineVariants}
                             style={{
                                 position: 'absolute',
-                                top: '1.5rem',
+                                top: '-3px',
                                 left: '31px',
                                 width: '2px',
                                 backgroundColor: '#d1d1d6',
