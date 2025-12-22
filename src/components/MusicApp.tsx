@@ -1,4 +1,4 @@
-import { ChevronLeft, Play, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface MusicAppProps {
@@ -148,7 +148,7 @@ export function MusicApp({ onClose, onStartClose }: MusicAppProps) {
                     {item.artist}
                 </div>
             </div>
-            <MoreHorizontal size={20} color="#c7c7cc" />
+
         </div>
     );
 

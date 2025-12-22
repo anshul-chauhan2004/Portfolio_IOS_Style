@@ -6,11 +6,13 @@ interface WeatherData {
         temp: number;
         condition: string;
         icon: number;
+        isDay: number;
     };
     hourly: Array<{
         time: string;
         temp: number;
         icon: number;
+        isDay: number;
     }>;
     daily: Array<{
         day: string;
@@ -21,16 +23,16 @@ interface WeatherData {
     }>;
 }
 
-const getWeatherIcon = (code: number, size = 24) => {
+const getWeatherIcon = (code: number, size = 24, isDay = 1) => {
     const fontSize = size === 56 ? '56px' : size === 24 ? '24px' : '20px';
 
     if (code === 0) {
-        // Sunny
-        return <span style={{ fontSize, lineHeight: 1 }}>☀️</span>;
+        // Sunny / Clear
+        return <span style={{ fontSize, lineHeight: 1 }}>{isDay ? '☀️' : '🌙'}</span>;
     }
     if (code <= 3) {
         // Cloudy
-        return <span style={{ fontSize, lineHeight: 1 }}>☁️</span>;
+        return <span style={{ fontSize, lineHeight: 1 }}>{isDay ? '☁️' : '☁️'}</span>;
     }
     if (code <= 67) {
         // Rainy
@@ -44,7 +46,7 @@ const getWeatherIcon = (code: number, size = 24) => {
 };
 
 const getWeatherEmoji = (code: number) => {
-    if (code === 0) return '☀️';
+    if (code === 0) return '☀️'; // Daily forecast doesn't need night icons usually
     if (code <= 3) return '☁️';
     if (code <= 67) return '🌧️';
     if (code <= 77) return '❄️';
@@ -69,9 +71,9 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
 
         const fetchWeather = async () => {
             try {
-                // Fetch real data from Open-Meteo API
+                // Fetch real data from Open-Meteo API including is_day
                 const res = await fetch(
-                    'https://api.open-meteo.com/v1/forecast?latitude=30.6942&longitude=76.8606&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7'
+                    'https://api.open-meteo.com/v1/forecast?latitude=30.6942&longitude=76.8606&current=temperature_2m,weather_code,is_day&hourly=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7'
                 );
                 const data = await res.json();
 
@@ -86,7 +88,8 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
                         hourlyData.push({
                             time: data.hourly.time[hourIndex],
                             temp: Math.round(data.hourly.temperature_2m[hourIndex]),
-                            icon: data.hourly.weather_code[hourIndex]
+                            icon: data.hourly.weather_code[hourIndex],
+                            isDay: data.hourly.is_day[hourIndex]
                         });
                     } else {
                         // Handle next day hours
@@ -95,7 +98,8 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
                             hourlyData.push({
                                 time: data.hourly.time[hourIndex],
                                 temp: Math.round(data.hourly.temperature_2m[hourIndex]),
-                                icon: data.hourly.weather_code[hourIndex]
+                                icon: data.hourly.weather_code[hourIndex],
+                                isDay: data.hourly.is_day[hourIndex]
                             });
                         }
                     }
@@ -114,7 +118,8 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
                     current: {
                         temp: Math.round(data.current.temperature_2m),
                         condition: data.current.weather_code === 0 ? 'Sunny' : data.current.weather_code <= 3 ? 'Cloudy' : 'Rainy',
-                        icon: data.current.weather_code
+                        icon: data.current.weather_code,
+                        isDay: data.current.is_day
                     },
                     hourly: hourlyData,
                     daily: dailyData
@@ -245,7 +250,7 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
 
                 {/* Current Temperature */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                    {getWeatherIcon(weather.current.icon, 56)}
+                    {getWeatherIcon(weather.current.icon, 56, weather.current.isDay)}
                     <div style={{ fontSize: '96px', fontWeight: 200, color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
                         {weather.current.temp}°
                     </div>
@@ -267,7 +272,7 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
                             <div style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)' }}>
                                 {formatHourTime(hour.time)}
                             </div>
-                            {getWeatherIcon(hour.icon, 20)}
+                            {getWeatherIcon(hour.icon, 20, hour.isDay)}
                             <div style={{ fontSize: '15px', fontWeight: 600, color: 'white' }}>
                                 {hour.temp}°
                             </div>

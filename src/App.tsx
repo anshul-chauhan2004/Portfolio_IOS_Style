@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AppIcon } from './components/AppIcon';
 import { DockIcon } from './components/DockIcon';
 import { CalendarIcon } from './components/CalendarIcon';
@@ -68,6 +68,62 @@ export default function App() {
       setOnboardingStep('complete');
     }
   }, [phoneState, onboardingStep]);
+
+  // Voice feedback logic is now consolidated in the transition hook below
+
+  // Track previous state to handle transitions correctly
+  const prevPhoneState = useRef<PhoneState>(phoneState);
+
+  useEffect(() => {
+    // Define robust speak function
+    const speak = (text: string) => {
+      if (!('speechSynthesis' in window)) return;
+
+      const runSpeak = () => {
+        window.speechSynthesis.cancel(); // Reset previous speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        console.log("Available Voices:", voices.map(v => v.name)); // DEBUG: See what is actually available
+
+        // Male voice selection
+        // Voice selection: Prioritize Google US English
+        const maleVoice = voices.find(v =>
+          v.name === 'Google US English' ||
+          v.name.includes('Google US English')
+        );
+
+        if (maleVoice) utterance.voice = maleVoice;
+        utterance.rate = 1.00; // Slightly faster than normal
+        utterance.pitch = 1.0; // More lively
+
+        console.log(`[Voice] Speaking: "${text}" | State: ${phoneState} | Voice: ${maleVoice?.name ?? 'Default'}`);
+        window.speechSynthesis.speak(utterance);
+      };
+
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          runSpeak();
+          window.speechSynthesis.onvoiceschanged = null;
+        };
+      } else {
+        runSpeak();
+      }
+    };
+
+    // Skip if we haven't fundamentally changed state, or if we are still booting
+    if (prevPhoneState.current === phoneState) return;
+
+    // Transition: Booting/Unlocked -> Locked
+    if (phoneState === 'LOCKED' && (prevPhoneState.current === 'BOOTING' || prevPhoneState.current === 'UNLOCKED')) {
+      speak("Please unlock the phone");
+    }
+    // Transition: Locked -> Unlocked
+    else if (phoneState === 'UNLOCKED' && prevPhoneState.current === 'LOCKED') {
+      speak("Welcome, you now have access to Unshul's Portfolio");
+    }
+
+    prevPhoneState.current = phoneState;
+  }, [phoneState]);
 
   type PageItem =
     | { type: 'calendar' }

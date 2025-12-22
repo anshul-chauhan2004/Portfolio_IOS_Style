@@ -1889,8 +1889,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
+
 /* Prevent scrollbar to eliminate layout shift */
-html {
-  overflow: hidden;
-  height: 100vh;
-}
+/* Scrollbar allowed again */

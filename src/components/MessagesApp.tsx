@@ -128,6 +128,12 @@ export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
             ])
             .select();
 
+        if (error) {
+            console.error('Error sending message:', error);
+            alert(`Failed to send message: ${error.message}`);
+            return;
+        }
+
         if (data && data.length > 0) {
             const newMsgData = data[0];
 
@@ -145,7 +151,11 @@ export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
                 timestamp: new Date(newMsgData.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
-            setMessages((prev) => [...prev, newMessage]);
+            setMessages((prev) => {
+                // De-duplicate in case subscription picks it up super fast
+                if (prev.some(msg => msg.id === newMessage.id)) return prev;
+                return [...prev, newMessage];
+            });
         }
     };
 

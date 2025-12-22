@@ -15,6 +15,8 @@ interface SearchBarProps {
 
 export function SearchBar({ onOpenApp }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [voiceState, setVoiceState] = useState<'idle' | 'loading' | 'listening'>('idle');
+
     const [isSearching, setIsSearching] = useState(false);
     const searchBarRef = useRef<HTMLDivElement>(null);
     const [activeRect, setActiveRect] = useState<DOMRect | null>(null);
@@ -29,6 +31,7 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
         { title: 'Safari', description: 'Web browser with favorite websites and bookmarks', category: 'App', appId: 'safari' },
         { title: 'Messages', description: 'Contact form and communication', category: 'App', appId: 'messages' },
         { title: 'Contact', description: 'Contact information and phone details', category: 'App', appId: 'phone' },
+        { title: 'Notes', description: 'Personal goals, targets, and reminders', category: 'App', appId: 'notes' },
     ];
 
     const searchResults = portfolioData.filter(item =>
@@ -36,13 +39,86 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
         item.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            // Logic handled by overlay click
+    // Voice Search Implementation
+    const startVoiceSearch = () => {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert("Voice recognition is not supported in this browser.");
+            return;
         }
-        return () => { };
-    }, []);
+
+        // Instant feedback - Loading state
+        setVoiceState('loading');
+        setSearchQuery('');
+        setIsSearching(true);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+            // Now strictly listening
+            setVoiceState('listening');
+
+            if (searchBarRef.current && !activeRect) {
+                const rect = searchBarRef.current.getBoundingClientRect();
+                setActiveRect(rect);
+            }
+        };
+
+        recognition.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            console.log('Voice result:', transcript);
+
+            // Command Processing: "Open [App Name]"
+            // Remove punctuation to handle "Open settings." or "Open settings!"
+            const cleanTranscript = transcript.replace(/[.,!?;:]/g, '');
+
+            if (cleanTranscript.includes('open')) {
+                const appMap: Record<string, string> = {
+                    'music': 'music',
+                    'notes': 'notes',
+                    'calendar': 'calendar',
+                    'settings': 'settings',
+                    'weather': 'weather',
+                    'files': 'files',
+                    'safari': 'safari',
+                    'messages': 'messages',
+                    'contact': 'phone',
+                    'contacts': 'phone',
+                    'phone': 'phone',
+                    'project': 'projects',
+                    'projects': 'projects'
+                };
+
+                // Find if any app key exists in the transcript
+                const foundKey = Object.keys(appMap).find(key => cleanTranscript.includes(key));
+
+                if (foundKey && onOpenApp) {
+                    onOpenApp(appMap[foundKey]);
+                    setIsSearching(false);
+                    return;
+                }
+            }
+
+            // Default: Search for the text
+            setSearchQuery(transcript);
+        };
+
+        recognition.onerror = (event: any) => {
+            console.error('Speech recognition error', event.error);
+            setVoiceState('idle');
+        };
+
+        recognition.onend = () => {
+            setVoiceState('idle');
+        };
+
+        recognition.start();
+    };
 
     // Lock body scroll when searching
     useEffect(() => {
@@ -102,7 +178,11 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={!inPortal ? activateSearch : undefined}
-                placeholder="Search about me..."
+                placeholder={
+                    voiceState === 'loading' ? "Wait..." :
+                        voiceState === 'listening' ? "Listening..." :
+                            "Search about me..."
+                }
                 className="flex-1 bg-transparent text-white text-sm placeholder-white/60 outline-none"
                 style={{ caretColor: 'white', outline: 'none' }}
                 autoFocus={inPortal}
@@ -110,13 +190,23 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
 
             {/* Icons */}
             <div className="flex items-center gap-2">
-                <button className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                <button
+                    className="rounded-full transition-all duration-300 flex items-center justify-center hover:bg-white/10"
+                    onClick={startVoiceSearch}
+                    style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: voiceState !== 'idle' ? 'rgba(219, 68, 55, 0.4)' : 'transparent',
+                        boxShadow: voiceState === 'listening' ? '0 0 15px rgba(219, 68, 55, 0.5)' : 'none',
+                        animation: voiceState === 'listening' ? 'pulse 1.5s infinite' : 'none',
+                        marginLeft: '8px', // Add some spacing from input if needed, or rely on flex gap
+                    }}
+                >
                     <img
                         src="/src/assets/google-mic.png"
                         alt="Voice Search"
-                        width="20"
-                        height="20"
-                        style={{ marginRight: '12px' }}
+                        width="24"
+                        height="24"
                     />
                 </button>
             </div>
