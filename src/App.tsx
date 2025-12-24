@@ -7,6 +7,13 @@ import { WeatherWidget } from './components/WeatherWidget';
 import { SearchBar } from './components/SearchBar';
 import { LockScreen } from './components/LockScreen';
 import { BootScreen } from './components/BootScreen';
+import SettingsIcon from './assets/app-icons/settings.png';
+import MusicIcon from './assets/app-icons/music.png';
+import FilesIcon from './assets/app-icons/files.png';
+import PhoneIcon from './assets/app-icons/phone.png';
+import SafariIcon from './assets/app-icons/safari.png';
+import MessagesIcon from './assets/app-icons/messages.png';
+import NotesIcon from './assets/app-icons/notes.png';
 import { CalendarApp } from './components/CalendarApp';
 import { SettingsApp } from './components/SettingsApp';
 import { ContactApp } from './components/ContactApp';
@@ -149,10 +156,10 @@ export default function App() {
       { type: 'search' },
       { type: 'clock' },
       { type: 'weather' },
-      { image: '/src/assets/app-icons/settings.png', label: 'Settings' },
-      { image: '/src/assets/app-icons/music.png', label: 'Music' },
+      { image: SettingsIcon, label: 'Settings' },
+      { image: MusicIcon, label: 'Music' },
       { type: 'calendar' },
-      { image: '/src/assets/app-icons/files.png', label: 'Files' },
+      { image: FilesIcon, label: 'Files' },
     ],
     [
       { type: 'projects' },
@@ -160,10 +167,10 @@ export default function App() {
   ];
 
   const dockIcons = [
-    { image: '/src/assets/app-icons/phone.png', label: 'Contact' },
-    { image: '/src/assets/app-icons/safari.png', label: 'Safari' },
-    { image: '/src/assets/app-icons/messages.png', label: 'Messages' },
-    { image: '/src/assets/app-icons/notes.png', label: 'Notes' },
+    { image: PhoneIcon, label: 'Contact' },
+    { image: SafariIcon, label: 'Safari' },
+    { image: MessagesIcon, label: 'Messages' },
+    { image: NotesIcon, label: 'Notes' },
   ];
 
   const handlePageSwitch = (direction: 'left' | 'right') => {

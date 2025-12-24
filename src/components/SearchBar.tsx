@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Search } from 'lucide-react';
+import GoogleLogo from '../assets/google-logo.svg';
+import GoogleMic from '../assets/google-mic.png';
 
 interface SearchResult {
     title: string;
@@ -213,7 +215,7 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
         >
             {/* Google Logo */}
             <img
-                src="/src/assets/google-logo.svg"
+                src={GoogleLogo}
                 alt="Google"
                 width="32"
                 height="32"
@@ -251,7 +253,7 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                     }}
                 >
                     <img
-                        src="/src/assets/google-mic.png"
+                        src={GoogleMic}
                         alt="Voice Search"
                         width="24"
                         height="24"

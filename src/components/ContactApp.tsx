@@ -1,5 +1,6 @@
 import { ChevronLeft, MessageCircle, Mail, Github, Linkedin } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import ProfileImage from '../assets/profile.jpg';
 
 interface ContactAppProps {
     onClose: () => void;
@@ -135,7 +136,7 @@ export function ContactApp({ onClose, onStartClose }: ContactAppProps) {
                     background: 'linear-gradient(to bottom, transparent 0%, transparent 100%)'
                 }}>
                     <img
-                        src="/src/assets/profile.jpg"
+                        src={ProfileImage}
                         alt="Profile"
                         style={{
                             width: '90px',

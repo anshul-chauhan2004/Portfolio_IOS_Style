@@ -2,6 +2,13 @@ import { Search, MoreHorizontal, ChevronLeft, Calendar, Building, ArrowUpDown, C
 import { useState, useEffect } from 'react';
 import { certificates, Certificate } from '../data/certificates';
 import { motion, AnimatePresence } from 'framer-motion';
+import AkamaiLogo from '../assets/akamai.png';
+import HkustLogo from '../assets/hkust.png';
+import DukeLogo from '../assets/duke.png';
+import CbsLogo from '../assets/cbs.png';
+import IbmLogo from '../assets/ibm.png';
+import McmasterLogo from '../assets/mcmaster.png';
+import UoftLogo from '../assets/uoft.png';
 
 interface FilesAppProps {
     onClose: () => void;
@@ -29,7 +36,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '4px'
             }}>
-                <img src="/src/assets/akamai.png" alt="Akamai" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={AkamaiLogo} alt="Akamai" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -50,7 +57,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '2px'
             }}>
-                <img src="/src/assets/hkust.png" alt="HKUST" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={HkustLogo} alt="HKUST" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -71,7 +78,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '0px'
             }}>
-                <img src="/src/assets/duke.png" alt="Duke" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={DukeLogo} alt="Duke" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -92,7 +99,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '4px'
             }}>
-                <img src="/src/assets/cbs.png" alt="CBS" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={CbsLogo} alt="CBS" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -113,7 +120,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '4px'
             }}>
-                <img src="/src/assets/ibm.png" alt="IBM" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={IbmLogo} alt="IBM" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -134,7 +141,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '4px'
             }}>
-                <img src="/src/assets/mcmaster.png" alt="McMaster" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={McmasterLogo} alt="McMaster" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -155,7 +162,7 @@ const IssuerLogo = ({ issuer }: { issuer: string }) => {
                 overflow: 'hidden',
                 padding: '2px'
             }}>
-                <img src="/src/assets/uoft.png" alt="UofT" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={UoftLogo} alt="UofT" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
         );
     }

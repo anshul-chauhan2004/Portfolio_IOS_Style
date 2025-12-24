@@ -1,5 +1,6 @@
-import { ChevronLeft, ChevronRight, MapPin, GraduationCap, Download, Mail, Github, Linkedin, Monitor, Code2, Database, Cloud, Layout, GitBranch, Rocket, Users, Globe, Zap, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, GraduationCap, Download, Database, Rocket, Users, Globe, Zap, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import ProfileImage from '../assets/profile.jpg';
 
 interface SettingsAppProps {
     onClose: () => void;
@@ -156,7 +157,7 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
                 {/* Profile Section - iOS Style Large Header */}
                 <div style={{ padding: '0 1rem 1.5rem 1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <img
-                        src="/src/assets/profile.jpg"
+                        src={ProfileImage}
                         alt="Profile"
                         style={{
                             width: '80px',
