@@ -54,7 +54,7 @@ export function WeatherWidget({ delay = 0, onClick }: WeatherWidgetProps) {
             }}
         >
             <div
-                className="relative flex flex-col px-5 overflow-hidden shadow-2xl transition-transform hover:scale-105 active:scale-95 cursor-pointer text-white items-center justify-center"
+                className="relative flex flex-col px-5 overflow-hidden shadow-2xl transition-all duration-200 hover:scale-105 active:scale-90 cursor-pointer text-white items-center justify-center"
                 onClick={onClick}
                 style={{
                     width: '140px',
