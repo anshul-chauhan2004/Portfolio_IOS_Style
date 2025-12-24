@@ -75,15 +75,15 @@ export function WeatherWidget({ delay = 0, onClick }: WeatherWidgetProps) {
                     <>
                         {/* Header: Icon + LABEL */}
                         <div className="flex items-center justify-center gap-1.5 z-20 w-full mb-0.5">
-                            <Sunset size={16} className="text-white fill-white opacity-90" />
-                            <span className="text-white font-medium tracking-widest uppercase opacity-80" style={{ letterSpacing: '0.5px', fontSize: '14px' }}>
+                            <Sunset size={18} className="text-white fill-white opacity-90" />
+                            <span className="text-white font-medium tracking-widest uppercase opacity-80" style={{ letterSpacing: '1px', fontSize: '19px' }}>
                                 SUNSET
                             </span>
                         </div>
 
                         {/* Main Time */}
                         <div className="flex flex-col items-center z-20 w-full mb-1">
-                            <span className="text-white leading-tight font-semibold tracking-tight drop-shadow-sm text-center" style={{ fontSize: '26px' }}>
+                            <span className="text-white leading-tight font-semibold tracking-tight drop-shadow-sm text-center" style={{ fontSize: '22px' }}>
                                 {formatTime(sunData.sunset).replace(' ', '')}
                             </span>
                         </div>
