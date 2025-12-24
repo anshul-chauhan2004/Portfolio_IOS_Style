@@ -105,13 +105,24 @@ export function WeatherApp({ onClose, onStartClose }: WeatherAppProps) {
                     }
                 }
 
-                const dailyData = data.daily.time.map((day: string, i: number) => ({
-                    day,
-                    date: new Date(day).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
-                    icon: data.daily.weather_code[i],
-                    high: Math.round(data.daily.temperature_2m_max[i]),
-                    low: Math.round(data.daily.temperature_2m_min[i])
-                }));
+                // Filter out past days
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const dailyData = data.daily.time
+                    .map((day: string, i: number) => ({
+                        day,
+                        date: new Date(day).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
+                        icon: data.daily.weather_code[i],
+                        high: Math.round(data.daily.temperature_2m_max[i]),
+                        low: Math.round(data.daily.temperature_2m_min[i])
+                    }))
+                    .filter((item: any) => {
+                        // Create date in local time to compare correctly
+                        const parts = item.day.split('-');
+                        const itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                        return itemDate >= today;
+                    });
 
                 setWeather({
                     location: 'Panchkula',

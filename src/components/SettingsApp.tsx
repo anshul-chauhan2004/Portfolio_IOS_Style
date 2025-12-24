@@ -43,7 +43,8 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
         isLink = false,
         isLast = false,
         color = '#007aff',
-        textColor = '#000'
+        textColor = '#000',
+        onClick
     }: {
         icon?: React.ReactNode,
         label: string,
@@ -51,16 +52,20 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
         isLink?: boolean,
         isLast?: boolean,
         color?: string,
-        textColor?: string
+        textColor?: string,
+        onClick?: () => void
     }) => (
-        <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '11px 0',
-            marginLeft: '16px',
-            borderBottom: isLast ? 'none' : '0.5px solid #c6c6c8',
-            cursor: isLink ? 'pointer' : 'default',
-        }}>
+        <div
+            onClick={onClick}
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '11px 0',
+                marginLeft: '16px',
+                borderBottom: isLast ? 'none' : '0.5px solid #c6c6c8',
+                cursor: (isLink || onClick) ? 'pointer' : 'default',
+            }}
+        >
             {icon && (
                 <div style={{
                     minWidth: '28px',
@@ -196,6 +201,7 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
                         isLink={true}
                         color="#ff3b30"
                         isLast={true}
+                        onClick={() => window.open('/resume.pdf', '_blank')}
                     />
                 </div>
 

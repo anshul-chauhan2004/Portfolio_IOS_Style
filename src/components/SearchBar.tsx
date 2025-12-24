@@ -15,6 +15,7 @@ interface SearchBarProps {
 
 export function SearchBar({ onOpenApp }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [countdown, setCountdown] = useState(3);
     const [voiceState, setVoiceState] = useState<'idle' | 'loading' | 'listening'>('idle');
 
     const [isSearching, setIsSearching] = useState(false);
@@ -39,6 +40,32 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
         item.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // Refs to manage cancellation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recognitionRef = useRef<any>(null);
+    const timerRef = useRef<any>(null);
+
+    const stopVoiceSearch = () => {
+        // Clear countdown timer
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+
+        // Abort recognition if active
+        if (recognitionRef.current) {
+            try {
+                recognitionRef.current.abort();
+            } catch (e) {
+                // Ignore errors on abort
+            }
+            recognitionRef.current = null;
+        }
+
+        setVoiceState('idle');
+        setIsSearching(false);
+    };
+
     // Voice Search Implementation
     const startVoiceSearch = () => {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -46,14 +73,23 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
             return;
         }
 
+        // Cleanup any previous session
+        stopVoiceSearch();
+
         // Instant feedback - Loading state
+        if (searchBarRef.current) {
+            const rect = searchBarRef.current.getBoundingClientRect();
+            setActiveRect(rect);
+        }
         setVoiceState('loading');
         setSearchQuery('');
         setIsSearching(true);
+        setCountdown(3); // Reset countdown
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
 
         recognition.lang = 'en-US';
         recognition.interimResults = false;
@@ -74,7 +110,6 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
             console.log('Voice result:', transcript);
 
             // Command Processing: "Open [App Name]"
-            // Remove punctuation to handle "Open settings." or "Open settings!"
             const cleanTranscript = transcript.replace(/[.,!?;:]/g, '');
 
             if (cleanTranscript.includes('open')) {
@@ -94,7 +129,6 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                     'projects': 'projects'
                 };
 
-                // Find if any app key exists in the transcript
                 const foundKey = Object.keys(appMap).find(key => cleanTranscript.includes(key));
 
                 if (foundKey && onOpenApp) {
@@ -117,7 +151,21 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
             setVoiceState('idle');
         };
 
-        recognition.start();
+        // Artificial delay with countdown
+        let count = 3;
+        timerRef.current = setInterval(() => {
+            count--;
+            setCountdown(count);
+            if (count === 0) {
+                if (timerRef.current) clearInterval(timerRef.current);
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error("Recognition start error:", e);
+                    setVoiceState('idle');
+                }
+            }
+        }, 1000);
     };
 
     // Lock body scroll when searching
@@ -179,8 +227,8 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={!inPortal ? activateSearch : undefined}
                 placeholder={
-                    voiceState === 'loading' ? "Wait..." :
-                        voiceState === 'listening' ? "Listening..." :
+                    voiceState === 'loading' ? `Wait ${countdown}...` :
+                        voiceState === 'listening' ? "Speak Now..." :
                             "Search about me..."
                 }
                 className="flex-1 bg-transparent text-white text-sm placeholder-white/60 outline-none"
@@ -196,7 +244,7 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                     style={{
                         width: '40px',
                         height: '40px',
-                        backgroundColor: voiceState !== 'idle' ? 'rgba(219, 68, 55, 0.4)' : 'transparent',
+                        backgroundColor: voiceState === 'listening' ? 'rgba(219, 68, 55, 0.4)' : 'transparent',
                         boxShadow: voiceState === 'listening' ? '0 0 15px rgba(219, 68, 55, 0.5)' : 'none',
                         animation: voiceState === 'listening' ? 'pulse 1.5s infinite' : 'none',
                         marginLeft: '8px', // Add some spacing from input if needed, or rely on flex gap
@@ -226,7 +274,7 @@ export function SearchBar({ onOpenApp }: SearchBarProps) {
                             backdropFilter: 'blur(20px)',
                             WebkitBackdropFilter: 'blur(20px)',
                         }}
-                        onClick={() => setIsSearching(false)}
+                        onClick={stopVoiceSearch}
                     />
 
                     {/* Active Search Bar & Results Positioned Exactly */}

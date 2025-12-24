@@ -93,18 +93,24 @@ export default function App() {
         );
 
         if (maleVoice) utterance.voice = maleVoice;
-        utterance.rate = 1.00; // Slightly faster than normal
-        utterance.pitch = 1.0; // More lively
+        utterance.rate = 1.00;
+        utterance.pitch = 1.0;
 
         console.log(`[Voice] Speaking: "${text}" | State: ${phoneState} | Voice: ${maleVoice?.name ?? 'Default'}`);
         window.speechSynthesis.speak(utterance);
       };
 
       if (window.speechSynthesis.getVoices().length === 0) {
-        window.speechSynthesis.onvoiceschanged = () => {
-          runSpeak();
-          window.speechSynthesis.onvoiceschanged = null;
-        };
+        // Polling fallback mechanism for cached voices issue
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          const voices = window.speechSynthesis.getVoices();
+          if (voices.length > 0 || attempts > 20) { // Try for 2 seconds
+            clearInterval(interval);
+            runSpeak();
+          }
+        }, 100);
       } else {
         runSpeak();
       }
@@ -115,7 +121,11 @@ export default function App() {
 
     // Transition: Booting/Unlocked -> Locked
     if (phoneState === 'LOCKED' && (prevPhoneState.current === 'BOOTING' || prevPhoneState.current === 'UNLOCKED')) {
-      speak("Please unlock the phone");
+      // Small delay to ensure audio context is ready
+      setTimeout(() => {
+        window.speechSynthesis.resume(); // Unblock if paused
+        speak("Please unlock the phone");
+      }, 1000);
     }
     // Transition: Locked -> Unlocked
     else if (phoneState === 'UNLOCKED' && prevPhoneState.current === 'LOCKED') {
