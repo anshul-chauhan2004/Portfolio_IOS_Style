@@ -74,16 +74,16 @@ export function WeatherWidget({ delay = 0, onClick }: WeatherWidgetProps) {
                 ) : (
                     <>
                         {/* Header: Icon + LABEL */}
-                        <div className="flex items-center justify-center gap-1.5 z-20 w-full mb-1">
+                        <div className="flex items-center justify-center gap-1.5 z-20 w-full mb-0.5">
                             <Sunset size={16} className="text-white fill-white opacity-90" />
-                            <span className="text-white font-medium tracking-widest uppercase opacity-80" style={{ letterSpacing: '1px', fontSize: '17px' }}>
+                            <span className="text-white font-medium tracking-widest uppercase opacity-80" style={{ letterSpacing: '0.5px', fontSize: '14px' }}>
                                 SUNSET
                             </span>
                         </div>
 
                         {/* Main Time */}
-                        <div className="flex flex-col items-center z-20 w-full mb-2">
-                            <span className="text-white leading-tight font-semibold tracking-tight drop-shadow-sm text-center" style={{ fontSize: '20px' }}>
+                        <div className="flex flex-col items-center z-20 w-full mb-1">
+                            <span className="text-white leading-tight font-semibold tracking-tight drop-shadow-sm text-center" style={{ fontSize: '26px' }}>
                                 {formatTime(sunData.sunset).replace(' ', '')}
                             </span>
                         </div>
@@ -111,7 +111,7 @@ export function WeatherWidget({ delay = 0, onClick }: WeatherWidgetProps) {
 
                         {/* Secondary Info (Bottom): Sunrise */}
                         <div className="mt-auto z-20 w-full text-center">
-                            <span className="text-white/70 font-medium leading-tight" style={{ fontSize: '12px' }}>
+                            <span className="text-white/70 font-medium leading-tight" style={{ fontSize: '13px' }}>
                                 Sunrise: <span className="text-white">{formatTime(sunData.sunrise)}</span>
                             </span>
                         </div>
