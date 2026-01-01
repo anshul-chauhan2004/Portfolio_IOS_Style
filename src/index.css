@@ -145,10 +145,12 @@
     font-feature-settings: var(--default-font-feature-settings, normal);
     font-variation-settings: var(--default-font-variation-settings, normal);
     -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
   }
 
   body {
     line-height: inherit;
+    overscroll-behavior: none;
   }
 
   hr {
