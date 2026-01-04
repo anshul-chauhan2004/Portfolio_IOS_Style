@@ -46,7 +46,7 @@ export function ProjectsStack() {
             category: 'DASHBOARD',
             techStack: ['React', 'Context API', 'CSS3'],
             link: 'https://github.com/anshul-chauhan2004/UAB',
-            liveLink: 'https://uab-gamma.vercel.app/',
+
             image: '/uab.png',
             color: '#f093fb'
         },
