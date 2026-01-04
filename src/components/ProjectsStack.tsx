@@ -18,6 +18,17 @@ export function ProjectsStack() {
 
     const projects: Project[] = [
         {
+            id: '4',
+            title: 'Skillfind',
+            description: 'Enterprise-grade job portal with AI integration',
+            category: 'WEB APP',
+            techStack: ['Spring Boot', 'Java', 'MySQL', 'Gemini API'],
+            link: 'https://github.com/anshul-chauhan2004/Job-Application-Service',
+            liveLink: 'https://job-application-service-production.up.railway.app/',
+            image: '/skillfind.png',
+            color: '#06b6d4'
+        },
+        {
             id: '1',
             title: 'CollabSpace',
             description: 'Real-time collaboration platform',
