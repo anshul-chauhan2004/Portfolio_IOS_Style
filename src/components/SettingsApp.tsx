@@ -202,7 +202,7 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
                         isLink={true}
                         color="#ff3b30"
                         isLast={true}
-                        onClick={() => window.open('/resume.pdf', '_blank')}
+                        onClick={() => window.open('/Anshul_Resume.pdf', '_blank')}
                     />
                 </div>
 
