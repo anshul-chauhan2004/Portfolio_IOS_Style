@@ -9,6 +9,7 @@ import CbsLogo from '../assets/cbs.png';
 import IbmLogo from '../assets/ibm.png';
 import McmasterLogo from '../assets/mcmaster.png';
 import UoftLogo from '../assets/uoft.png';
+import NutanixLogo from '../assets/nutanix.svg';
 
 interface FilesAppProps {
     onClose: () => void;
@@ -20,6 +21,27 @@ type SortOption = 'date' | 'name' | 'issuer';
 const IssuerLogo = ({ issuer }: { issuer: string }) => {
     // Check for specific logos
     const lower = issuer.toLowerCase();
+    if (lower.includes('nutanix')) {
+        return (
+            <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                backgroundColor: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: '16px',
+                flexShrink: 0,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                padding: '5px'
+            }}>
+                <img src={NutanixLogo} alt="Nutanix" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+        );
+    }
+
     if (lower.includes('akamai')) {
         return (
             <div style={{

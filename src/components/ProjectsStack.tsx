@@ -18,6 +18,17 @@ export function ProjectsStack() {
 
     const projects: Project[] = [
         {
+            id: '5',
+            title: 'VaultLend',
+            description: 'DeFi lending and borrowing platform',
+            category: 'WEB3 APP',
+            techStack: ['React', 'DeFi', 'Web3'],
+            link: 'https://github.com/anshul-chauhan2004/VaultLend',
+            liveLink: 'https://anshul-chauhan2004.github.io/VaultLend/',
+            image: '/vaultlend.svg',
+            color: '#22c55e'
+        },
+        {
             id: '4',
             title: 'Skillfind',
             description: 'Enterprise-grade job portal with AI integration',

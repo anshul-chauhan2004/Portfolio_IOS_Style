@@ -186,7 +186,7 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
                     <ListItem
                         icon={<GraduationCap size={16} />}
                         label="CGPA"
-                        value="9.0"
+                        value="9.17"
                         color="#ff9500"
                         isLast={true}
                     />
@@ -216,7 +216,7 @@ export function SettingsApp({ onClose, onStartClose }: SettingsAppProps) {
                             <span style={{ color: '#8e8e93', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>2023–Present</span>
                         </div>
                         <div style={{ fontSize: '13px', color: '#8e8e93', marginBottom: '2px' }}>Coursework: DSA, OOP, OS, CN, DBMS</div>
-                        <div style={{ fontSize: '15px', color: '#3c3c43' }}>B.E. CSE (CGPA 9.0)</div>
+                        <div style={{ fontSize: '15px', color: '#3c3c43' }}>B.E. CSE (CGPA 9.17)</div>
                     </div>
 
                     {/* GMSSS */}

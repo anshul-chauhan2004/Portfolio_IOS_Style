@@ -1,4 +1,5 @@
 // Import certificates
+import nutanixCertifiedAssociate from '../assets/certificates/Nutanix Certified Associate 6.pdf';
 import networkingFundamentals from '../assets/certificates/Networking Fundamentals.pdf';
 import protectingBusinessInnovationSpecialization from '../assets/certificates/Protecting Business Innovation.pdf';
 import protectingCopyright from '../assets/certificates/Protecting Business Innovations via Copyright.pdf';
@@ -39,6 +40,8 @@ export interface Certificate {
 }
 
 export const certificates: Certificate[] = [
+    { id: '30', name: 'Nutanix Certified Associate 6', issuer: 'Nutanix', date: 'Feb 2026', type: 'pdf', documentUrl: nutanixCertifiedAssociate },
+
     // Image 1
     { id: '1', name: 'Networking Fundamentals', issuer: 'Akamai Technologies, Inc.', date: 'Aug 2024', type: 'pdf', documentUrl: networkingFundamentals },
     { id: '2', name: 'Protecting Business Innovation Specialization', issuer: 'HKUST', date: 'Aug 2024', type: 'pdf', documentUrl: protectingBusinessInnovationSpecialization },
