@@ -67,6 +67,30 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+      const phoneScale = Math.min(1, (viewportWidth - 32) / 380, (viewportHeight - 32) / 780);
+
+      document.documentElement.style.setProperty('--app-height', `${viewportHeight}px`);
+      document.documentElement.style.setProperty('--phone-scale', `${phoneScale}`);
+      document.documentElement.style.setProperty('--phone-stage-width', `${380 * phoneScale}px`);
+      document.documentElement.style.setProperty('--phone-stage-height', `${780 * phoneScale}px`);
+    };
+
+    updateViewportHeight();
+    window.visualViewport?.addEventListener('resize', updateViewportHeight);
+    window.visualViewport?.addEventListener('scroll', updateViewportHeight);
+    window.addEventListener('resize', updateViewportHeight);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateViewportHeight);
+      window.visualViewport?.removeEventListener('scroll', updateViewportHeight);
+      window.removeEventListener('resize', updateViewportHeight);
+    };
+  }, []);
+
   // Watch for phone unlock during onboarding
   useEffect(() => {
     if (onboardingStep === 'waitingForUnlock' && phoneState === 'UNLOCKED') {
@@ -188,7 +212,8 @@ export default function App() {
 
       {/* Hide phone during welcome and password info */}
       {onboardingStep !== 'welcome' && onboardingStep !== 'passwordInfo' && (
-        <div className="phone-frame relative w-[380px] h-[780px] bg-black rounded-[3rem] p-3 shadow-2xl ring-8 ring-slate-800">
+        <div className="phone-stage">
+          <div className="phone-frame relative w-[380px] h-[780px] bg-black rounded-[3rem] p-3 shadow-2xl ring-8 ring-slate-800">
           <div
             className="relative w-full h-full rounded-[2.5rem] overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: 'url("/wallpaper.png")' }}
@@ -579,6 +604,7 @@ export default function App() {
                 <AssistiveTouch onLock={() => setPhoneState('LOCKED')} />
               )}
             </div>
+          </div>
           </div>
         </div>
       )}
