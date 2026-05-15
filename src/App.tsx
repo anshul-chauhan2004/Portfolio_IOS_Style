@@ -181,14 +181,14 @@ export default function App() {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-black p-2 font-sans">
+    <div className="app-viewport min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-black p-2 font-sans">
       {/* Ambient light effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
 
       {/* Hide phone during welcome and password info */}
       {onboardingStep !== 'welcome' && onboardingStep !== 'passwordInfo' && (
-        <div className="relative w-[380px] h-[780px] bg-black rounded-[3rem] p-3 shadow-2xl ring-8 ring-slate-800">
+        <div className="phone-frame relative w-[380px] h-[780px] bg-black rounded-[3rem] p-3 shadow-2xl ring-8 ring-slate-800">
           <div
             className="relative w-full h-full rounded-[2.5rem] overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: 'url("/wallpaper.png")' }}
@@ -207,6 +207,10 @@ export default function App() {
             <div
               id="phone-main-interface"
               className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${phoneState === 'UNLOCKED' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+              style={{
+                touchAction: activeApp ? 'auto' : 'none',
+                overscrollBehavior: 'contain'
+              }}
               onTouchStart={(e) => {
                 // Disable swipe when app is open
                 if (activeApp) return;
@@ -228,6 +232,7 @@ export default function App() {
               onTouchMove={(e) => {
                 // Disable swipe when app is open
                 if (activeApp) return;
+                if (e.cancelable) e.preventDefault();
 
                 // Real-time 3-finger swipe detection - triggers during gesture
                 if (e.touches.length === 3 && e.currentTarget.dataset.threeFingerStartX) {
