@@ -26,6 +26,24 @@ const hiddenMessageIds = new Set([
     135, 136, 137, 138, 140, 141, 143, 144
 ]);
 
+const blockedMessagePatterns = [
+    /\bfuck\b/i,
+    /\btamari\b/i,
+    /\btari\b/i,
+    /\btango\b/i,
+    /\btangoo\b/i,
+    /\bmasi\b/i,
+    /\bben\b/i,
+    /\bpiko\b/i,
+    /\bbhegu\b/i,
+    /\bthane\b/i
+];
+
+const isBlockedMessage = (message: { id: number; text?: string; sender?: string }) => {
+    const content = `${message.text || ''} ${message.sender || ''}`;
+    return hiddenMessageIds.has(message.id) || blockedMessagePatterns.some((pattern) => pattern.test(content));
+};
+
 export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +66,7 @@ export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
                     const mySentIds = JSON.parse(localStorage.getItem('my_sent_message_ids') || '[]');
 
                     const formattedMessages: Message[] = data
-                        .filter((msg: any) => !hiddenMessageIds.has(msg.id))
+                        .filter((msg: any) => !isBlockedMessage(msg))
                         .map((msg: any) => ({
                             id: msg.id,
                             text: msg.text,
@@ -78,7 +96,7 @@ export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
                     const newMsg = payload.new;
                     const mySentIds = JSON.parse(localStorage.getItem('my_sent_message_ids') || '[]');
 
-                    if (hiddenMessageIds.has(newMsg.id)) {
+                    if (isBlockedMessage(newMsg)) {
                         return;
                     }
 
@@ -131,6 +149,11 @@ export function MessagesApp({ onClose, onStartClose }: MessagesAppProps) {
 
         const textToSend = inputText;
         const nameToSend = senderName.trim() || 'Guest';
+
+        if (isBlockedMessage({ id: -1, text: textToSend, sender: nameToSend })) {
+            alert('Please keep messages respectful.');
+            return;
+        }
 
         setInputText(''); // Clear input immediately
         if (senderName.trim()) {
